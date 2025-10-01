@@ -1,0 +1,65 @@
+@keyframes pulse {
+  0%,
+  50%,
+  100% {
+    transform: scale(1);
+  }
+  25% {
+    transform: scale(1.5);
+  }
+}
+
+@keyframes wave {
+  0% {
+    transform: translate(-50%, -50%) scale(1);
+  }
+  20% {
+    transform: translate(-50%, -50%) scale(2);
+    opacity: 0;
+  }
+  30% {
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 0;
+  }
+}
+
+.button-dot {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  position: relative;
+  animation: pulse 1.5s infinite ease-in-out;
+  z-index: 1;
+}
+
+.button-dot::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background-color: #d9d9d9;
+  transform: translate(-50%, -50%) scale(1);
+  animation: wave 1.5s infinite ease-out;
+  z-index: 0;
+}
+
+.button-dot-first,
+.button-dot-first::after {
+  animation-delay: 0s;
+}
+.button-dot-second,
+.button-dot-second::after {
+  animation-delay: 0.375s;
+}
+.button-dot-third,
+.button-dot-third::after {
+  animation-delay: 0.75s;
+}
+.button-dot-fourth,
+.button-dot-fourth::after {
+  animation-delay: 1.125s;
+}

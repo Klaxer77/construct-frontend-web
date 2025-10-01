@@ -1,0 +1,19 @@
+services:
+  nginx:
+    build:
+      context: .
+      dockerfile: Dockerfile.prod
+    image: construct_nginx_prod_image:latest
+    container_name: construct_nginx_prod
+    ports:
+      - 80:80
+      - 443:443
+    restart: unless-stopped
+    networks:
+      - app_network
+    volumes:
+      - ~/ssl:/etc/nginx/ssl:ro
+
+networks:
+  app_network:
+    driver: bridge
