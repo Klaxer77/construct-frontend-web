@@ -141,7 +141,7 @@ export const RemarksBlock = ({ data }: RemarksBlockData) => {
                 gridTemplateColumns: "1fr 1fr 1fr 1fr 1fr 1fr",
               }}
             >
-              <div className="px-[16px] font-[600] text-[16px] leading-[24px] tracking-[-0.2px] text-[#585757]">
+              <div className="px-[16px] font-[600] text-[16px] leading-[24px] tracking-[-0.2px] text-[#585757] truncate">
                 {row.object_name}
               </div>
               <div className="px-[16px] font-[600] text-[16px] leading-[24px] tracking-[-0.2px] text-[#413F3F]">

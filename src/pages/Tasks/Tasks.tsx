@@ -73,7 +73,7 @@ export const Tasks: React.FC = () => {
                 {index + 1}
               </div>
 
-              <div className=" px-[16px] font-[600] text-[16px] leading-[24px] tracking-[-0.2px] text-[#585757]">
+              <div className=" px-[16px] font-[600] text-[16px] leading-[24px] tracking-[-0.2px] text-[#585757] truncate">
                 {row.name}
               </div>
               <div className=" px-[16px] font-[600] text-[16px] leading-[24px] tracking-[-0.2px] text-[#585757]">
