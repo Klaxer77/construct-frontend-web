@@ -85,9 +85,13 @@ export const GeneralBlock = ({ data }: GeneralBlockProps) => {
     {
       title: "Координаты",
       text: (
-        <span className="flex flex-wrap gap-[10px]">
+        <span className="flex flex-col gap-[15px]">
           {data?.coords.map((item, index) => (
-            <p key={index}>{item}</p>
+            <div key={index} className="flex flex-wrap gap-[10px]">
+              {item.map((cord, cordindex) => (
+                <p key={cordindex}>{cord}</p>
+              ))}
+            </div>
           ))}
         </span>
       ),
