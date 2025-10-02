@@ -1,7 +1,7 @@
-import { Link, useLocation } from 'react-router';
-import { Icon, RoundButton, SearchInput } from '../../shared';
-import { useEffect, useState } from 'react';
-import { navTabs } from './tabs';
+import { Link, useLocation } from "react-router";
+import { Icon, RoundButton, SearchInput } from "../../shared";
+import { useEffect, useState } from "react";
+import { navTabs } from "./tabs";
 
 interface NavBarProps {
   sidebarWidth: string;
@@ -9,35 +9,37 @@ interface NavBarProps {
 
 export const NavBar = ({ sidebarWidth }: NavBarProps) => {
   const location = useLocation();
-  const [search, setSearch] = useState('');
+  const [search, setSearch] = useState("");
   const [isScrolled, setIsScrolled] = useState(false);
 
   useEffect(() => {
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 50);
     };
-    window.addEventListener('scroll', handleScroll);
+    window.addEventListener("scroll", handleScroll);
     handleScroll();
-    return () => window.removeEventListener('scroll', handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  const pathnames = location.pathname.split('/').filter(Boolean);
+  const pathnames = location.pathname.split("/").filter(Boolean);
 
   let breadcrumbs;
 
-  if (location.pathname.startsWith('/objects/activation')) {
+  if (location.pathname.startsWith("/objects/activation")) {
     breadcrumbs = navTabs
-      .filter((tab) => tab.path === '/objects')
+      .filter((tab) => tab.path === "/objects")
       .map((tab) => ({ name: tab.name, path: tab.path }));
   } else {
     breadcrumbs = pathnames
-      .filter((value) => value !== 'remark')
+      .filter((value) => !["remark", "violation"].includes(value))
+
       .map((value, index, arr) => {
-        const path = '/' + pathnames.slice(0, index + 1).join('/');
+        const path = "/" + pathnames.slice(0, index + 1).join("/");
         const route = navTabs.find((r) => r.path === path);
 
         const isLast = index === arr.length - 1;
-        const name = route?.name || (isLast ? decodeURIComponent(value) : value);
+        const name =
+          route?.name || (isLast ? decodeURIComponent(value) : value);
 
         return { name, path };
       })
@@ -47,9 +49,10 @@ export const NavBar = ({ sidebarWidth }: NavBarProps) => {
   return (
     <nav
       className={`fixed top-0 h-[78px] px-[25px] bg-white flex items-center justify-between transition-all duration-300 z-50 ${
-        isScrolled && 'shadow-[0px_2px_9.7px_0px_#0000000A]'
+        isScrolled && "shadow-[0px_2px_9.7px_0px_#0000000A]"
       }`}
-      style={{ width: `calc(100vw - ${sidebarWidth})` }}>
+      style={{ width: `calc(100vw - ${sidebarWidth})` }}
+    >
       <div className="flex items-center gap-[4px]">
         <Icon name="Logo" />
 
@@ -60,7 +63,8 @@ export const NavBar = ({ sidebarWidth }: NavBarProps) => {
 
               <Link
                 to={crumb.path}
-                className="font-[700] text-[16px] leading-[24px] tracking-[-0.2px] text-[#686868]">
+                className="font-[700] text-[16px] leading-[24px] tracking-[-0.2px] text-[#686868]"
+              >
                 {crumb.name}
               </Link>
             </div>
@@ -73,7 +77,11 @@ export const NavBar = ({ sidebarWidth }: NavBarProps) => {
           onChange={setSearch}
           placeholder="Введите запрос или команду (Ctrl + G)"
         />
-        <RoundButton icon={<Icon name="Notification" />} onClick={() => {}} hasNotification />
+        <RoundButton
+          icon={<Icon name="Notification" />}
+          onClick={() => {}}
+          hasNotification
+        />
       </div>
     </nav>
   );

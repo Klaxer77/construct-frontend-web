@@ -18,7 +18,7 @@ const dataMap = {
   review: { statusText: "На проверке", statusColor: "blue" },
 } as const;
 
-export const ViolationPage = () => {
+export const ViolationPage: React.FC = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalImage, setModalImage] = useState<string>("");
   const location = useLocation();
@@ -108,7 +108,7 @@ export const ViolationPage = () => {
   ];
 
   const tableData: ObjectItem[] =
-    violation?.remarks?.map((r, index) => ({
+    violation?.violations?.map((r, index) => ({
       number: index + 1,
       violations: r.violations,
       name_regulatory_docx: r.name_regulatory_docx,
@@ -141,7 +141,7 @@ export const ViolationPage = () => {
               className="!pb-[10px]"
               classNameSubTitle="!text-[18px] !text-[#4C4C4C]"
               title={violation?.object_name}
-              subtitle={`Замечание ${formatDate(violation?.date_violation)}`}
+              subtitle={`Нарушение ${formatDate(violation?.date_violation)}`}
             ></Header>
           </div>
 

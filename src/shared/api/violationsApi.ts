@@ -29,7 +29,7 @@ interface ViolationResponse {
   date_violation: string;
   expiration_date: string;
   object_name: string;
-  remarks: Violations[];
+  violations: Violations[];
 }
 
 export const getAllViolations = async (
