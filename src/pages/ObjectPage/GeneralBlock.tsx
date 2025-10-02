@@ -53,7 +53,7 @@ export const GeneralBlock = ({ data }: GeneralBlockProps) => {
     },
     {
       title: "Технический заказчик",
-      text: "Описание текст текст текст",
+      text: "ООО “Тулс”",
     },
     {
       title: "Застройщик (Адрес)",
@@ -61,12 +61,12 @@ export const GeneralBlock = ({ data }: GeneralBlockProps) => {
     },
     {
       title: "Лицо, осуществляющее подготовку проектной документации",
-      text: "Общество с ограниченной ответственностью «Мезонин» (ООО «Мезонин»)",
+      text: "ООО “Тулс”",
     },
     {
       title:
         "Лицо, осуществляющее строительство, реконструкцию, капитальный ремонт",
-      text: "Общество с ограниченной ответственностью «Приоритет» (ООО «Приоритет»). Ассоциация СРО «СТРОЙГАРАНТ» (СРО-С-120-17122009 ИНН 5905270972) №899 от 20.04.2018",
+      text: "ООО “Тулс”",
     },
   ];
   const data2 = [
@@ -85,7 +85,7 @@ export const GeneralBlock = ({ data }: GeneralBlockProps) => {
     {
       title: "Координаты",
       text: (
-        <span>
+        <span className="flex flex-wrap gap-[10px]">
           {data?.coords.map((item, index) => (
             <p key={index}>{item}</p>
           ))}
@@ -102,11 +102,11 @@ export const GeneralBlock = ({ data }: GeneralBlockProps) => {
     },
     {
       title: "Адрес",
-      text: "614015, г. Пермь, ул. Луначарского, 56, офис 222; свидетельство серии 59 № 001766410 от 03.12.2002 о внесении записи в ЕГРЮЛ, ОГРН 1025900525045, ИНН 5902139169, тел./факс (342)280-97-58, тел. 89129864520",
+      text: "г. Пермь, тел. +79223665636",
     },
     {
       title: "Адрес",
-      text: "ОГРН 1025900772314, ИНН 5903000378, 614065, г. Пермь, ул. К. Беляева, д. 35, кв. 99, тел. +79048453755",
+      text: "г. Пермь, тел. +79223665636",
     },
   ];
 
@@ -115,7 +115,7 @@ export const GeneralBlock = ({ data }: GeneralBlockProps) => {
   ): number[][][] => {
     if (!coords) return [];
     if (Array.isArray(coords[0]) && typeof coords[0][0] === "number") {
-      return [coords as number[][]]; // number[][] → number[][][]
+      return [coords as number[][]];
     }
     return coords as number[][][];
   };
