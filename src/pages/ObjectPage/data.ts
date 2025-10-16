@@ -37,6 +37,7 @@ export const tabs = [
   { label: "Замечания", value: "remarks" },
   { label: "Нарушения", value: "violations" },
   { label: "Ход работ", value: "progress" },
+  { label: "Материалы", value: "materials" },
   { label: "Задачи", value: "tasks" },
   { label: "Сотрудники", value: "employees" },
   { label: "Журналы", value: "magazine" },

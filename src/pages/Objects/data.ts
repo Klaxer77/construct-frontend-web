@@ -13,7 +13,7 @@ interface Column<T> {
   title?: string;
 }
 
-interface ObjectItem {
+export interface ObjectItem {
   number?: number;
   name: string;
   id: string;

@@ -51,6 +51,9 @@ interface ProjectObject {
     status: string;
     file_url: string;
   };
+  check_list: {
+    status: string;
+  };
   is_nfc: boolean;
 }
 
@@ -145,6 +148,21 @@ export const changeObjectAct = async (
   const response = await api.post(`/objects/act/change/${objectId}`, null, {
     params: { action },
   });
+
+  return response.data.data;
+};
+
+export const changeCheckList = async (
+  objectId: string,
+  action: "accept" | "deny"
+): Promise<Object> => {
+  const response = await api.post(
+    `/objects/checklist/change/${objectId}`,
+    null,
+    {
+      params: { action },
+    }
+  );
 
   return response.data.data;
 };

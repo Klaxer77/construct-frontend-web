@@ -16,6 +16,7 @@ import { GeneralBlock } from "./GeneralBlock";
 import { useObjectById } from "../../shared/hooks/useObjects";
 import { useLocation } from "react-router";
 import { ViolationsBlock } from "./ViolationsBlock";
+import { MaterialsBlock } from "./MaterialsBlock";
 
 export const ObjectPage = () => {
   const [activeTab, setActiveTab] = useState("general");
@@ -86,6 +87,8 @@ export const ObjectPage = () => {
           <RemarksBlock data={object} />
         ) : activeTab === "violations" ? (
           <ViolationsBlock data={object} />
+        ) : activeTab === "materials" ? (
+          <MaterialsBlock object_id={object?.id} object_title={object?.title} />
         ) : (
           <GeneralBlock data={object} />
         )}

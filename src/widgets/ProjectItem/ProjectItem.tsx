@@ -41,20 +41,18 @@ export const ProjectItem = ({
   const navigate = useNavigate();
   const [open, setOpen] = useState(false);
 
-  const normalizeCoords = (c: number[][][] | number[][]) => {
-    if (Array.isArray(c[0][0])) {
-      return (c as number[][][]).map((polygon) =>
-        polygon.map(([lng, lat]) => [lat, lng] as [number, number])
-      );
-    } else {
-      return [
-        (c as number[][]).map(([lng, lat]) => [lat, lng] as [number, number]),
-      ];
+  const normalizeCoords = (
+    coords?: number[][] | number[][][]
+  ): number[][][] => {
+    if (!coords) return [];
+    if (Array.isArray(coords[0]) && typeof coords[0][0] === "number") {
+      return [coords as number[][]];
     }
+    return coords as number[][][];
   };
 
   const polygonCoords = normalizeCoords(coords);
-  const center = polygonCoords[0][0];
+  const center = [polygonCoords[0][0][1], polygonCoords[0][0][0]];
 
   const statusData = {
     lead: { statusText: "Опережение", statusColor: "blue" },
@@ -162,7 +160,7 @@ export const ProjectItem = ({
             {polygonCoords.map((polygon, i) => (
               <Polygon
                 key={i}
-                geometry={[polygon]}
+                geometry={[polygon.map(([lng, lat]) => [lat, lng])]}
                 options={{ fillColor: "#007aff55", strokeColor: "#007aff" }}
               />
             ))}

@@ -10,7 +10,7 @@ export const Layout = ({ children }: LayoutProps) => {
   const [isOpen, setIsOpen] = useState(true);
 
   return (
-    <div className="min-h-screen">
+    <>
       <SideBar isOpen={isOpen} setIsOpen={setIsOpen} />
 
       <div
@@ -19,8 +19,8 @@ export const Layout = ({ children }: LayoutProps) => {
         }`}
       >
         <NavBar sidebarWidth={isOpen ? "274px" : "70px"} />
-        <main className="mt-[78px] px-[30px] pb-[30px]">{children}</main>
+        <main className="pt-[78px] px-[30px] pb-[30px] min-h-dvh">{children}</main>
       </div>
-    </div>
+    </>
   );
 };

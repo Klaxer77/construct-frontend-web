@@ -1479,6 +1479,101 @@ const iconsMap: Record<IconName, FC<SVGProps<SVGSVGElement>>> = {
       />
     </svg>
   ),
+  LocationAdd: ({ className }) => (
+    <svg
+      width="45"
+      height="45"
+      viewBox="0 0 45 45"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      className={className}
+    >
+      <path
+        d="M17.3438 20.625H27.6562"
+        stroke="#007AFF"
+        strokeWidth="2.8125"
+        strokeLinecap="round"
+      />
+      <path
+        d="M22.5 25.7812V15.4688"
+        stroke="#007AFF"
+        strokeWidth="2.8125"
+        strokeLinecap="round"
+      />
+      <path
+        d="M6.78329 15.9188C10.477 -0.318746 34.5333 -0.299995 38.2083 15.9375C40.3645 25.4625 34.4395 33.525 29.2458 38.5125C25.477 42.15 19.5145 42.15 15.727 38.5125C10.552 33.525 4.62704 25.4438 6.78329 15.9188Z"
+        stroke="#007AFF"
+        strokeWidth="2.8125"
+      />
+    </svg>
+  ),
+  Download: ({ className }) => (
+    <svg
+      width="24"
+      height="24"
+      viewBox="0 0 24 24"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      className={className}
+    >
+      <path
+        d="M9.32031 11.6797L11.8803 14.2397L14.4403 11.6797"
+        stroke="#007AFF"
+        strokeWidth="1.5"
+        strokeMiterlimit="10"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+      <path
+        d="M11.8828 4V14.17"
+        stroke="#007AFF"
+        strokeWidth="1.5"
+        strokeMiterlimit="10"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+      <path
+        d="M20 12.1797C20 16.5997 17 20.1797 12 20.1797C7 20.1797 4 16.5997 4 12.1797"
+        stroke="#007AFF"
+        strokeWidth="1.5"
+        strokeMiterlimit="10"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
+  ),
+  Phone: ({ className }) => (
+    <svg
+      width="29"
+      height="34"
+      viewBox="0 0 29 34"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      className={className}
+    >
+      <path
+        d="M27 9.1875V24.8125C27 31.0625 25.4375 32.625 19.1875 32.625H9.8125C3.5625 32.625 2 31.0625 2 24.8125V9.1875C2 2.9375 3.5625 1.375 9.8125 1.375H19.1875C25.4375 1.375 27 2.9375 27 9.1875Z"
+        stroke="#007AFF"
+        strokeWidth="2.34375"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+      <path
+        d="M17.625 6.84375H11.375"
+        stroke="#007AFF"
+        strokeWidth="2.34375"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+      <path
+        d="M14.5 28.0938C15.8376 28.0938 16.9219 27.0094 16.9219 25.6719C16.9219 24.3343 15.8376 23.25 14.5 23.25C13.1624 23.25 12.0781 24.3343 12.0781 25.6719C12.0781 27.0094 13.1624 28.0938 14.5 28.0938Z"
+        stroke="#007AFF"
+        strokeWidth="2.34375"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
+  ),
 };
 
 export const Icon: FC<IconProps> = ({ name, className, color }) => {

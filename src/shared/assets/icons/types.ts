@@ -45,6 +45,9 @@ export const ICON_LABELS = {
   Inspection: "Инспекция",
   Plus: "Плюс",
   Map: "Карта",
+  LocationAdd: "Добавить локацию",
+  Download: "Скачать",
+  Phone: "Телефон",
 } as const;
 
 export type IconName = keyof typeof ICON_LABELS;

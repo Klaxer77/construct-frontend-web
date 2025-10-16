@@ -17,3 +17,4 @@ export * from "./Activation/Activation";
 export * from "./Policy/Policy";
 export * from "./Support/Support";
 export * from "./ViolationPage/ViolationPage";
+export * from "./MaterialPage/MaterialPage";

@@ -31,7 +31,7 @@ export const NavBar = ({ sidebarWidth }: NavBarProps) => {
       .map((tab) => ({ name: tab.name, path: tab.path }));
   } else {
     breadcrumbs = pathnames
-      .filter((value) => !["remark", "violation"].includes(value))
+      .filter((value) => !["remark", "violation", "material"].includes(value))
 
       .map((value, index, arr) => {
         const path = "/" + pathnames.slice(0, index + 1).join("/");

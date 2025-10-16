@@ -56,7 +56,7 @@ export const ObjectMap = ({
   const setActivePolygonIndex = (index: number | null) =>
     onActivePolygonChange?.(index) ?? setUncontrolledIndex(index);
 
-  const ymaps = useYMaps(["geocode"]) as YMaps | null;
+  const ymaps = useYMaps(["geocode"]) as unknown as YMaps | null;
 
   const getCityFromCoords = async (
     ymaps: YMaps,
@@ -133,9 +133,12 @@ export const ObjectMap = ({
     setIsInteractive(true);
   };
 
-  const center: [number, number] = coords[0]?.[0]
-    ? [coords[0][0][1], coords[0][0][0]]
+  const center: [number, number] = readOnly
+    ? coords[0]?.[0]
+      ? [coords[0][0][1], coords[0][0][0]]
+      : [55.7558, 37.6173]
     : userLocation ?? [55.7558, 37.6173];
+
   const isAddDisabled =
     !isInteractive ||
     (activePolygonIndex !== null && coords[activePolygonIndex]?.length < 3);

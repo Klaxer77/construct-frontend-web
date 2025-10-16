@@ -5,7 +5,7 @@ import { useState } from "react";
 import { MainBlock } from "./MainBlock";
 import { ParamsBlock, type ParamsValues } from "./ParamsBlock";
 import {
-  useChangeObjectAct,
+  useChangeCheckList,
   useCheckList,
   useCreateCheckList,
   useObjectById,
@@ -39,7 +39,7 @@ export const Activation: React.FC = () => {
       : searchParams.get("contractor_company") ?? "";
 
   const { mutate: send, isPending } = useCreateCheckList(object_id);
-  const { mutate: agree } = useChangeObjectAct();
+  const { mutate: agree } = useChangeCheckList();
 
   const [params, setParams] = useState<ParamsValues>(
     tableData.reduce((acc, row) => {

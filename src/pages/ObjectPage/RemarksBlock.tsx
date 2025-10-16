@@ -5,6 +5,7 @@ import { useNavigate } from "react-router";
 import { useAllRemarks } from "../../shared/hooks/useRemarks";
 import { formatFio } from "../../shared/hooks/useFormatFIO";
 import { useFormatDate } from "../../shared/hooks/useFormatDate";
+import { format, parseISO } from "date-fns";
 
 interface ResponsibleUser {
   id: string;
@@ -48,18 +49,16 @@ const dataMap = {
   not_fixed: { statusText: "Активен", statusColor: "green" },
   fixed: { statusText: "Исправлено", statusColor: "greenDark" },
   review: { statusText: "На проверке", statusColor: "blue" },
-  blocked: { statusText: "Блорирующий", statusColor: "red" },
 } as const;
 
 type StatusKey = keyof typeof dataMap;
 
-type ButtonKey = "all" | "active" | "corrected" | "review" | "blocked";
+type ButtonKey = "all" | "active" | "corrected" | "review";
 
 const buttons: { id: ButtonKey; text: string }[] = [
   { id: "all", text: "Все" },
   { id: "active", text: "Активные" },
   { id: "corrected", text: "Исправленные" },
-  { id: "blocked", text: "Блорирующие" },
   { id: "review", text: "На проверке" },
 ];
 
@@ -80,8 +79,6 @@ export const RemarksBlock = ({ data }: RemarksBlockData) => {
           return row.status === "fixed";
         case "review":
           return row.status === "review";
-        case "blocked":
-          return row.status === "blocked";
         default:
           return true;
       }
@@ -138,14 +135,15 @@ export const RemarksBlock = ({ data }: RemarksBlockData) => {
               key={index}
               className="grid items-center border-b border-borderGray h-[64px]"
               style={{
-                gridTemplateColumns: "1fr 1fr 1fr 1fr 1fr 1fr",
+                gridTemplateColumns: "2fr 1fr 1fr 1fr 1fr 1fr",
               }}
             >
               <div className="px-[16px] font-[600] text-[16px] leading-[24px] tracking-[-0.2px] text-[#585757] truncate">
                 {row.object_name}
               </div>
               <div className="px-[16px] font-[600] text-[16px] leading-[24px] tracking-[-0.2px] text-[#413F3F]">
-                {formatDate(row.date_remark)}
+                {formatDate(row.date_remark)} |{" "}
+                {format(parseISO(row.date_remark), "HH:mm")}
               </div>
               <div className="px-[16px] font-[600] text-[16px] leading-[24px] tracking-[-0.2px] text-[#413F3F]">
                 {formatDate(row.expiration_date)}

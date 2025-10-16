@@ -9,6 +9,7 @@ import {
   Dashboard,
   Journal,
   Login,
+  MaterialPage,
   NotFound,
   ObjectPage,
   Objects,
@@ -69,6 +70,10 @@ createRoot(document.getElementById("root")!).render(
                 <Route
                   path="/objects/violation/:name"
                   element={<ViolationPage />}
+                />
+                <Route
+                  path="/objects/material/:name"
+                  element={<MaterialPage />}
                 />
                 <Route path="/tasks/:name" element={<TaskPage />} />
 

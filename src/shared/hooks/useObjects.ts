@@ -1,5 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
+  changeCheckList,
   changeObjectAct,
   createCheckList,
   createObject,
@@ -23,6 +24,25 @@ export const useChangeObjectAct = () => {
       objectId: string;
       action: "accept" | "deny";
     }) => changeObjectAct(objectId, action),
+    onSuccess: (_, variables) => {
+      queryClient.invalidateQueries({
+        queryKey: ["object", variables.objectId],
+      });
+      queryClient.invalidateQueries({ queryKey: ["objects"] });
+    },
+  });
+};
+
+export const useChangeCheckList = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({
+      objectId,
+      action,
+    }: {
+      objectId: string;
+      action: "accept" | "deny";
+    }) => changeCheckList(objectId, action),
     onSuccess: (_, variables) => {
       queryClient.invalidateQueries({
         queryKey: ["object", variables.objectId],
