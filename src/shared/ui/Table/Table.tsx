@@ -42,7 +42,7 @@ export const Table = <T extends object>({
       {data.map((row, rowIndex) => (
         <div
           key={rowIndex}
-          className={`grid items-center border-b border-borderGray h-[64px] ${classNameRow}`}
+          className={`grid items-center border-b border-borderGray min-h-[64px] ${classNameRow}`}
           style={{ gridTemplateColumns }}
         >
           {columns.map((col, colIndex) => {
