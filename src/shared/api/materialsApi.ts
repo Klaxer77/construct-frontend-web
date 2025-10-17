@@ -5,13 +5,20 @@ interface SubMaterials {
   title: string;
   date_from: string;
   date_to: string;
+  status_main: string;
+  status_second: string;
+  kpgz: string;
+  volume: number;
+  unit: string;
+  percent: number;
 }
 interface MaterialsList {
   id: string;
   title: string;
   date_from: string;
   date_to: string;
-  subcategories: SubMaterials[];
+  percent: number;
+  stages: SubMaterials[];
 }
 interface MaterialsDetail {
   id: string;
@@ -30,17 +37,51 @@ interface MaterialsDetail {
   created_at: string;
 }
 
-export const getMaterials = async (): Promise<MaterialsList[]> => {
-  const response = await api.get("/materials/list");
+interface Stage {
+  title: string;
+  date_from: string;
+  date_to: string;
+  kpgz: string;
+  volume: number;
+  unit: string;
+}
+
+export interface CreateWorkPayload {
+  title: string;
+  date_from: string;
+  date_to: string;
+  stages: Stage[];
+}
+
+export const getMaterials = async (
+  object_id: string
+): Promise<MaterialsList[]> => {
+  const response = await api.get("/materials/list/work", {
+    params: { object_id },
+  });
   return response.data.data;
 };
 
 export const getMaterialsDetails = async (
-  object_id: string,
-  category_id: string
+  stage_progress_work_id: string
 ): Promise<MaterialsDetail[]> => {
-  const response = await api.get(
-    `/materials/list/detail/${object_id}/${category_id}`
-  );
+  const response = await api.get(`/materials/list/${stage_progress_work_id}`);
+  return response.data.data;
+};
+
+export const getMaterialsProgress = async (
+  object_id: string
+): Promise<{ progress: number }> => {
+  const response = await api.get(`/materials/progress/${object_id}`);
+  return response.data.data;
+};
+
+export const createWork = async (
+  object_id: string,
+  payload: CreateWorkPayload
+) => {
+  const response = await api.post(`/materials/create/works`, payload, {
+    params: { object_id },
+  });
   return response.data.data;
 };

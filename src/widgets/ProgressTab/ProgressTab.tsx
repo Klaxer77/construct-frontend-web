@@ -1,19 +1,25 @@
 import { useState } from "react";
-import { Button, Icon, ProgressBar, StatusItem, Table } from "../../shared";
+import {
+  Button,
+  Icon,
+  ProgressBar,
+  StatusItem,
+  Table,
+  type Column,
+} from "../../shared";
 import {
   buttons,
   colorsExpl,
-  columns,
-  dataTable,
   lightStatusColors,
   months,
   statusColors,
-  tasks,
 } from "./data";
 import { format, parseISO } from "date-fns";
 import staff from "/img/Staff.png";
 import { useCurrentUser } from "../../shared/hooks/useAuth";
 import { CreateProgress } from "../CreateProgress/CreateProgress";
+import { useMaterials, useProgress } from "../../shared/hooks/useMaterials";
+import { useFormatDate } from "../../shared/hooks/useFormatDate";
 
 interface ResponsibleUser {
   id: string;
@@ -39,6 +45,18 @@ interface dataTypes {
   start_date: string;
   coords: number[][][] | number[][];
   responsible_user: ResponsibleUser;
+}
+export interface ObjectItem {
+  number?: number;
+  title: string;
+  date_from: string;
+  date_to: string;
+  status_main: string;
+  status_second: string;
+  kpgz: string;
+  volume: number;
+  unit: string;
+  percent: number;
 }
 
 interface Data {
@@ -72,14 +90,97 @@ export const ProgressTab = ({ data }: Data) => {
   const [isCreating, setIsCreating] = useState(false);
   const { data: user } = useCurrentUser();
   const isConstructionControl = user?.role === "construction_control";
+  const { data: work } = useMaterials(data?.id ?? "");
+  const { formatDate } = useFormatDate();
 
   const toggleOpen = (i: number) => {
     setOpenIndexes((prev) =>
       prev.includes(i) ? prev.filter((index) => index !== i) : [...prev, i]
     );
   };
+  const now = new Date();
+  const upcomingTaskId =
+    work &&
+    work
+      .filter((task) => new Date(task.date_from) > now)
+      .sort(
+        (a, b) =>
+          new Date(a.date_from).getTime() - new Date(b.date_from).getTime()
+      )[0]?.id;
+  const { data: percent } = useProgress(data?.id ?? "");
+  const completedCount =
+    work && work.filter((task) => new Date(task.date_to) < now).length;
+  const totalCount = work && work.length;
+
+  const columns: Column<ObjectItem>[] = [
+    {
+      key: "number",
+      title: "№",
+      render: (_value, _row, index) => (
+        <p className="font-[800] text-[#413F3F]">{index + 1}</p>
+      ),
+    },
+    { key: "title", title: "Наименование работы" },
+    { key: "volume", title: "Объем" },
+    { key: "unit", title: "Единица измерения" },
+    { key: "kpgz", title: "КПГЗ" },
+    {
+      key: "date_from",
+      title: "Начало",
+      render: (value) => (
+        <div className="flex items-center gap-[6px] text-[14px]">
+          {formatDate(String(value))}
+          <Icon name="Pen" color="#007aff" />
+        </div>
+      ),
+    },
+    {
+      key: "date_to",
+      title: "Окончание",
+      render: (value) => (
+        <div className="flex items-center gap-[6px] text-[14px]">
+          {formatDate(String(value))}
+          <Icon name="Pen" color="#007aff" />
+        </div>
+      ),
+    },
+    {
+      key: "percent",
+      title: "Прогресс",
+      render: (value) => (
+        <p
+          className={`font-[700] text-[14px] leading-[12px] tracking-[-0.28px] ${
+            value === 100
+              ? "text-[#00691E]"
+              : value === 0
+              ? "text-[#808080]"
+              : "text-blueSideBarActive"
+          }`}
+        >
+          {value}%
+        </p>
+      ),
+    },
+    {
+      key: "status_main",
+      title: "Статус",
+      render: (_value, row) => (
+        <div className="flex flex-col gap-[6px]">
+          <StatusItem text="В работе" status="blue" />
+          {row.status_second !== "none" && (
+            <div className="rounded-[4px] bg-[#FFF2D4] flex items-center justify-center">
+              <p className="text-[#735400] font-[600] text-[14px] leading-[24px] tracking-[-0.4px] w-[68px]">
+                Требует проверки
+              </p>
+            </div>
+          )}
+        </div>
+      ),
+    },
+  ];
+
   return !isCreating ? (
-    tasks ? (
+    work?.length ? (
       <div className="flex flex-col">
         <div className="flex justify-between mb-[20px]">
           <p className="text-[16px] font-[700] leading-[24px] text-blackText mb-[10px]">
@@ -117,33 +218,49 @@ export const ProgressTab = ({ data }: Data) => {
             ))}
           </div>
 
-          {tasks.map((task, i) => {
-            const startMonth = task.start.split("-")[1];
-            const startDay = parseInt(task.start.split("-")[2], 10);
-            const endMonth = task.end.split("-")[1];
-            const endDay = parseInt(task.end.split("-")[2], 10);
+          {work.map((task, i) => {
+            const startDate = new Date(task.date_from);
+            const endDate = new Date(task.date_to);
+
+            let status: keyof typeof statusColors;
+
+            if (now > endDate) {
+              status = "done";
+            } else if (now >= startDate && now <= endDate) {
+              status = "inprogress";
+            } else if (task.id === upcomingTaskId) {
+              status = "upcoming";
+            } else {
+              status = "not_started";
+            }
+
+            const startMonth = startDate.getMonth() + 1;
+            const startDay = startDate.getDate();
+            const endMonth = endDate.getMonth() + 1;
+            const endDay = endDate.getDate();
 
             return (
               <div key={i} className="flex justify-between items-center">
                 <p className="font-[700] text-[14px] leading-[22px] tracking-[-0.2px] text-blackText">
-                  {task.name}
+                  {task.title}
                 </p>
                 <div className="flex items-center gap-[5px]">
                   {months.map((m) => {
+                    const monthNum = Number(m);
                     let bg = "bg-[#E6E7EB]";
 
-                    if (m > startMonth && m < endMonth) {
-                      bg = statusColors[task.status];
-                    } else if (m === startMonth) {
+                    if (monthNum > startMonth && monthNum < endMonth) {
+                      bg = statusColors[status];
+                    } else if (monthNum === startMonth) {
                       bg =
                         startDay > 15
-                          ? lightStatusColors[task.status]
-                          : statusColors[task.status];
-                    } else if (m === endMonth) {
+                          ? lightStatusColors[status]
+                          : statusColors[status];
+                    } else if (monthNum === endMonth) {
                       bg =
                         endDay < 15
-                          ? lightStatusColors[task.status]
-                          : statusColors[task.status];
+                          ? lightStatusColors[status]
+                          : statusColors[status];
                     }
 
                     return (
@@ -174,7 +291,7 @@ export const ProgressTab = ({ data }: Data) => {
           </div>
 
           <p className="font-[700] text-[14px] leading-[24px] text-darkGray">
-            Этап: 4/6
+            Этап: {completedCount}/{totalCount}
           </p>
         </div>
         <div className="flex flex-col gap-[12px]">
@@ -183,10 +300,10 @@ export const ProgressTab = ({ data }: Data) => {
               Прогресс
             </p>
             <p className="font-[700] text-[14px] leading-[22px] tracking-[-0.4px] text-blackText">
-              47%
+              {percent?.progress}%
             </p>
           </div>
-          <ProgressBar value={47} style={barColor} />
+          <ProgressBar value={percent?.progress ?? 0} style={barColor} />
         </div>
 
         <div className="flex flex-col gap-[20px] my-[24px]">
@@ -257,12 +374,12 @@ export const ProgressTab = ({ data }: Data) => {
             />
           </div>
 
-          {tasks.map((t, i) => {
+          {work.map((t, i) => {
             const isOpen = openIndexes.includes(i);
             const progressColor =
-              t.done === 100
+              t.percent === 100
                 ? "text-[#00691E]"
-                : t.done === 0
+                : t.percent === 0
                 ? "text-[#808080]"
                 : "text-blueSideBarActive";
             return (
@@ -275,16 +392,18 @@ export const ProgressTab = ({ data }: Data) => {
                     <p
                       className={`font-[700] text-[16px] leading-[14px] tracking-[-0.2px] ${progressColor}`}
                     >
-                      {t.done}%
+                      {t.percent}%
                     </p>
                     <div className="flex flex-col gap-[12px]">
                       <p className="font-[700] text-[16px] leading-[16px] text-[#3D3D3D] tracking-[-0.4px]">
-                        {t.name}
+                        {t.title}
                       </p>
                       <p className="font-[600] text-[14px] leading-[12px] text-[#00000080] tracking-[-0.28px]">
-                        {`${new Date(t.start).toLocaleDateString(
+                        {`${new Date(t.date_from).toLocaleDateString(
                           "ru-RU"
-                        )} – ${new Date(t.end).toLocaleDateString("ru-RU")}`}
+                        )} – ${new Date(t.date_to).toLocaleDateString(
+                          "ru-RU"
+                        )}`}
                       </p>
                     </div>
                   </div>
@@ -323,8 +442,8 @@ export const ProgressTab = ({ data }: Data) => {
                 >
                   <Table
                     columns={columns}
-                    data={dataTable}
-                    gridTemplateColumns="52px 2fr 1fr 1fr 2fr 1fr 1fr 1fr 1fr 1fr"
+                    data={t.stages ?? []}
+                    gridTemplateColumns="52px 2fr 1fr 1fr 1fr 120px 120px 1fr 1fr"
                   />
                 </div>
               </div>
@@ -355,10 +474,10 @@ export const ProgressTab = ({ data }: Data) => {
   ) : (
     <CreateProgress
       onCancel={() => setIsCreating(false)}
-      onComplete={(data) => {
-        console.log("Создан ход работ:", data);
+      onComplete={() => {
         setIsCreating(false);
       }}
+      object_id={data?.id}
     />
   );
 };

@@ -28,7 +28,6 @@ export const Progress: React.FC = () => {
             status={item.status as "lead" | "plan" | "delay" | "known"}
             id={item.id}
             adress={item.city}
-            procentage={43}
             responsible={item.responsible_user?.fio ?? "Неизвестно"}
             employees={23}
             updated={item.updated_at}

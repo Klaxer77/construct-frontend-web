@@ -8,22 +8,29 @@ interface SubMaterials {
   title: string;
   date_from: string;
   date_to: string;
+  status_main: string;
+  status_second: string;
+  kpgz: string;
+  volume: number;
+  unit: string;
+  percent: number;
 }
 interface MaterialsItemProps {
   id: string;
   title: string;
   date_from: string;
   date_to: string;
+  percent: number;
   object_id?: string;
   object_title?: string;
-  subcategories: SubMaterials[];
+  stages: SubMaterials[];
 }
 
 export const MaterialsItem = ({
   title,
   date_from,
   date_to,
-  subcategories,
+  stages,
   object_id,
   object_title,
 }: MaterialsItemProps) => {
@@ -54,7 +61,7 @@ export const MaterialsItem = ({
           className={`transition ${expose && "rotate-180"}`}
         />
       </div>
-      {subcategories.map((item, index) => (
+      {stages.map((item, index) => (
         <div key={index} className=" pt-[16px] ">
           <div className="flex items-center justify-between pb-[16px] border-b border-borderGray">
             <p className="font-[600] text-[14px] leading-[20px] tracking-[-0.2px] text-[#585757] max-w-[300px]">
@@ -62,10 +69,10 @@ export const MaterialsItem = ({
             </p>
             <div className="flex items-center gap-[49px] pr-[49px]">
               <p className="font-[600] text-[14px] leading-[24px] tracking-[-0.2px] text-[#585757]">
-                895,00
+                {item.volume}
               </p>
               <p className="font-[600] text-[14px] leading-[24px] tracking-[-0.2px] text-[#413F3F]">
-                Погонный метр
+                {item.unit}
               </p>
             </div>
           </div>
@@ -75,7 +82,7 @@ export const MaterialsItem = ({
             className="mt-[14px] rounded-[15px] h-[43px] font-[700] text-[15px]"
             onClick={() =>
               navigate(
-                `/objects/material/${object_title}?object_id=${object_id}&material_id=${item.id}&material_title=${title}`
+                `/objects/material/${object_title}?object_id=${object_id}&material_id=${item.id}&material_title=${title}&subtitle=${item.title}`
               )
             }
           />

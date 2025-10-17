@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { BigInput, Button, Icon } from "../../shared";
+import { useCreateWork } from "../../shared/hooks/useMaterials";
 
 interface Task {
   id: number;
@@ -21,17 +22,20 @@ interface ProjectData {
 interface CreateProgressProps {
   onCancel: () => void;
   onComplete: (data: ProjectData) => void;
+  object_id?: string;
 }
 
-export const CreateProgress: React.FC<CreateProgressProps> = ({
+export const CreateProgress = ({
   onCancel,
   onComplete,
-}) => {
+  object_id,
+}: CreateProgressProps) => {
   const [step, setStep] = useState<1 | 2>(1);
   const [projectName, setProjectName] = useState("");
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
   const [tasks, setTasks] = useState<Task[]>([]);
+  const { mutate: createWorkMutation } = useCreateWork(object_id ?? "");
 
   const handleAddTask = () => {
     setTasks((prev) => [
@@ -77,14 +81,41 @@ export const CreateProgress: React.FC<CreateProgressProps> = ({
       t.end.trim() !== ""
   );
 
+  const parseDateToISO = (dateStr: string) => {
+    const [day, month, year] = dateStr.split(".").map(Number);
+    return new Date(Date.UTC(year, month - 1, day)).toISOString();
+  };
+
   const handleNext = (): void => {
     if (step === 1) {
       if (!isStep1Complete) return;
       setStep(2);
       if (tasks.length === 0) handleAddTask();
     } else {
-      if (!isAllTasksComplete) return;
-      onComplete({ projectName, startDate, endDate, tasks });
+      if (!isAllTasksComplete || tasks.length === 0) return;
+
+      const startDateISO = parseDateToISO(startDate);
+      const endDateISO = parseDateToISO(endDate);
+
+      const payload = {
+        title: projectName,
+        date_from: startDateISO,
+        date_to: endDateISO,
+        stages: tasks.map((t) => ({
+          title: t.name,
+          date_from: parseDateToISO(t.start),
+          date_to: parseDateToISO(t.end),
+          kpgz: t.kpgz,
+          volume: Number(t.volume),
+          unit: t.unit,
+        })),
+      };
+
+      createWorkMutation(payload, {
+        onSuccess: () => {
+          onComplete({ projectName, startDate, endDate, tasks });
+        },
+      });
     }
   };
 
@@ -97,7 +128,9 @@ export const CreateProgress: React.FC<CreateProgressProps> = ({
               <h2 className="text-[20px] text-[#1C1C1C] font-[700]">
                 Создание этапа
               </h2>
-              <p>Ход работ</p>
+              <p className="font-[600] text-[18px] leading-[24px] tracking-[-0.4px] text-[#A0A0A5]">
+                Ход работ
+              </p>
             </div>
             <div className="flex gap-[10px]">
               <Button
@@ -159,10 +192,11 @@ export const CreateProgress: React.FC<CreateProgressProps> = ({
             </div>
             <div className="flex gap-[10px]">
               <Button
-                text="Далее"
+                text="Создать"
                 onClick={handleNext}
                 className={`h-[45px] text-[16px] ${
-                  !isAllTasksComplete && "opacity-50 !cursor-default"
+                  (!isAllTasksComplete || tasks.length === 0) &&
+                  "opacity-50 !cursor-default"
                 }`}
               />
               <Button

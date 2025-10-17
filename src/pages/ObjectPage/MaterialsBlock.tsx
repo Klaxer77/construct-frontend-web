@@ -9,7 +9,7 @@ export const MaterialsBlock = ({
   object_id?: string;
   object_title?: string;
 }) => {
-  const { data: materials } = useMaterials();
+  const { data: materials } = useMaterials(object_id ?? "");
   return (
     <div className="flex flex-col gap-[14px]">
       <div className="flex items-center justify-between">
@@ -26,7 +26,12 @@ export const MaterialsBlock = ({
       </div>
       <div className="flex flex-col gap-[10px]">
         {materials?.map((item, index) => (
-          <MaterialsItem {...item} object_id={object_id} object_title={object_title} key={index} />
+          <MaterialsItem
+            {...item}
+            object_id={object_id}
+            object_title={object_title}
+            key={index}
+          />
         ))}
       </div>
     </div>

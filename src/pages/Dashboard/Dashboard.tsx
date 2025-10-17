@@ -54,20 +54,21 @@ export const Dashboard = () => {
         <div className="flex flex-col-reverse gap-[14px]">
           {statusData
             ?.filter((item) => ["lead", "plan", "delay"].includes(item.status))
-            .map((item, index) => (
-              <ProjectItem
-                key={index}
-                title={item.title}
-                status={item.status as "lead" | "plan" | "delay"}
-                adress={item.city}
-                id={item.id}
-                procentage={43}
-                responsible={item.responsible_user?.fio ?? "Неизвестно"}
-                employees={23}
-                updated={item.updated_at}
-                coords={item.coords}
-              />
-            ))}
+            .map((item, index) => {
+              return (
+                <ProjectItem
+                  key={index}
+                  title={item.title}
+                  status={item.status as "lead" | "plan" | "delay"}
+                  adress={item.city}
+                  id={item.id}
+                  responsible={item.responsible_user?.fio ?? "Неизвестно"}
+                  employees={23}
+                  updated={item.updated_at}
+                  coords={item.coords}
+                />
+              );
+            })}
         </div>
       </div>
     </div>

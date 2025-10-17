@@ -13,12 +13,12 @@ import { formatDistanceToNow, parseISO } from "date-fns";
 import { ru } from "date-fns/locale";
 import { formatFio } from "../../shared/hooks/useFormatFIO";
 import { Map, Polygon, ZoomControl } from "@pbe/react-yandex-maps";
+import { useProgress } from "../../shared/hooks/useMaterials";
 
 interface ProjectItemProps {
   title: string;
   status: "lead" | "plan" | "delay" | "known" | "act";
   adress: string;
-  procentage: number;
   responsible: string;
   employees: number;
   updated: string;
@@ -30,7 +30,6 @@ export const ProjectItem = ({
   title,
   status,
   adress,
-  procentage,
   responsible,
   employees,
   updated,
@@ -67,6 +66,8 @@ export const ProjectItem = ({
     ? formatDistanceToNow(parseISO(updated), { addSuffix: true, locale: ru })
     : "—";
 
+  const { data: percent } = useProgress(id);
+
   return (
     <div className="p-[20px] border border-borderGray rounded-[20px] flex flex-col transition-all duration-300">
       <div className="flex items-center justify-between gap-[20px]">
@@ -90,10 +91,10 @@ export const ProjectItem = ({
                 Прогресс
               </p>
               <p className="font-[700] text-[14px] leading-[22px] tracking-[-0.4px] text-[#272525]">
-                {procentage}%
+                {percent?.progress}%
               </p>
             </div>
-            <ProgressBar value={procentage} style={statusColor} />
+            <ProgressBar value={percent?.progress ?? 0} style={statusColor} />
             <div className="flex items-center justify-between">
               <p className="font-[600] text-[14px] leading-[22px]  text-[#73737C]">
                 Ответственный: {formatFio(responsible)}
