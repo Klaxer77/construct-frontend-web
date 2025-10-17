@@ -110,6 +110,7 @@ export const MaterialPage = () => {
                   {[
                     { label: "Дата", value: item.date2 },
                     { label: "Заявка", value: item.order },
+                    {label: 'Тип', value: item.type},
                     { label: "Название", value: item.title },
                   ].map((f, i) => (
                     <div key={i} className="flex flex-col gap-[8px] w-full">
