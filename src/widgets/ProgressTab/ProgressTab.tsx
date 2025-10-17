@@ -3,6 +3,8 @@ import { Button, Icon, ProgressBar, StatusItem, Table } from "../../shared";
 import { columns, dataTable, tasks } from "./data";
 import { format, parseISO } from "date-fns";
 import staff from "/img/Staff.png";
+import { useCurrentUser } from "../../shared/hooks/useAuth";
+import { CreateProgress } from "../CreateProgress/CreateProgress";
 
 interface ResponsibleUser {
   id: string;
@@ -106,6 +108,9 @@ export const ProgressTab = ({ data }: Data) => {
   const [activeButton, setActiveButton] = useState<
     "general" | "done" | "check" | "change"
   >("general");
+  const [isCreating, setIsCreating] = useState(false);
+  const { data: user } = useCurrentUser();
+  const isConstructionControl = user?.role === "construction_control";
   const buttons = [
     {
       id: "general",
@@ -124,7 +129,7 @@ export const ProgressTab = ({ data }: Data) => {
       text: "Изменение",
     },
   ];
-  return (
+  return tasks ? (
     <div className="flex flex-col">
       <div className="flex justify-between mb-[20px]">
         <p className="text-[16px] font-[700] leading-[24px] text-blackText mb-[10px]">
@@ -337,5 +342,32 @@ export const ProgressTab = ({ data }: Data) => {
         ))}
       </div>
     </div>
+  ) : !isCreating ? (
+    <div className="min-h-[60dvh] flex flex-col items-center justify-center gap-[10px]">
+      <Icon name="LocationAdd" />
+      <p className="font-[700] text-[24px] leading-[36px] tracking-[-0.4px] max-w-[300px] text-center">
+        Ход работ не создан
+      </p>
+      <p className="text-[#A0A0A5] text-[20px] font-[600] leading-[30px] tracking-[-0.4px] max-w-[400px] text-center">
+        {user?.role !== "construction_control"
+          ? "Дождитесь создания хода работ"
+          : "Создайте категории и этапы, для управления и модерирования работ"}
+      </p>
+      {isConstructionControl && (
+        <Button
+          text="Создать"
+          onClick={() => setIsCreating(true)}
+          className="h-[58px] rounded-[15px] px-[26px] text-[20px]"
+        />
+      )}
+    </div>
+  ) : (
+    <CreateProgress
+      onCancel={() => setIsCreating(false)}
+      onComplete={(data) => {
+        console.log("Создан ход работ:", data);
+        setIsCreating(false);
+      }}
+    />
   );
 };
