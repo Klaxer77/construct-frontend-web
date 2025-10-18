@@ -68,7 +68,6 @@ export const ProjectItem = ({
   const { data: percent } = useProgress(id);
   const procent = Math.round((percent?.progress ?? 0) * 100);
   const { data: work } = useMaterials(id);
-  const now = new Date();
   const { formatDate } = useFormatDate();
 
   return (
@@ -202,8 +201,6 @@ export const ProjectItem = ({
             </div>
           </div>
           {work?.map((item, index) => {
-            const start = new Date(item.date_from);
-            const end = new Date(item.date_to);
             return (
               <div
                 key={index}
@@ -228,18 +225,18 @@ export const ProjectItem = ({
                 <div className="px-[16px] font-[600] text-[16px] leading-[24px] tracking-[-0.2px] text-[#585757] flex items-center">
                   <StatusItem
                     text={
-                      now <= end && now >= start
-                        ? "В работе"
-                        : now > end
+                      item.percent === 0
+                        ? "Не начат"
+                        : item.percent === 1
                         ? "Этап сдан"
-                        : "Не начат"
+                        : "В работе"
                     }
                     status={
-                      now <= end && now >= start
-                        ? "blue"
-                        : now > end
+                      item.percent === 0
+                        ? "gray"
+                        : item.percent === 1
                         ? "green"
-                        : "gray"
+                        : "blue"
                     }
                   />
                 </div>
