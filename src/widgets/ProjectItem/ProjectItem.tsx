@@ -4,9 +4,7 @@ import {
   Icon,
   ProgressBar,
   StatusItem,
-  Table,
   usePluralize,
-  type Column,
 } from "../../shared";
 import { useNavigate } from "react-router";
 import { formatDistanceToNow, parseISO } from "date-fns";
@@ -25,15 +23,6 @@ interface ProjectItemProps {
   updated: string;
   id: string;
   coords: number[][][] | number[][];
-}
-
-interface ObjectItem {
-  number?: number;
-  title: string;
-  date_from: string;
-  date_to: string;
-  responsible: string;
-  status_main: string;
 }
 
 export const ProjectItem = ({
@@ -76,61 +65,10 @@ export const ProjectItem = ({
     ? formatDistanceToNow(parseISO(updated), { addSuffix: true, locale: ru })
     : "—";
 
-  const { formatDate } = useFormatDate();
-
   const { data: percent } = useProgress(id);
   const { data: work } = useMaterials(id);
   const now = new Date();
-  const columns: Column<ObjectItem>[] = [
-    {
-      key: "number",
-      title: "№",
-      render: (_value, _row, index) => index + 1,
-    },
-    { key: "title", title: "Этап" },
-    {
-      key: "date_from",
-      title: "Дата начала",
-      render: (value) => formatDate(String(value)),
-    },
-    {
-      key: "date_to",
-      title: "Дата окончания",
-      render: (value) => formatDate(String(value)),
-    },
-    {
-      key: "responsible",
-      title: "Ответственный",
-      render: () => (
-        <div className="flex items-center gap-[14px]">
-          {formatFio(responsible)}
-          <Icon name="Share" color="#007AFF" />
-        </div>
-      ),
-    },
-    {
-      key: "status_main",
-      title: "Статус",
-      render: (_value, row) => (
-        <StatusItem
-          text={
-            String(now) <= row.date_to && String(now) >= row.date_from
-              ? "В работе"
-              : String(now) > row.date_to
-              ? "Этап сдан"
-              : "Не начат"
-          }
-          status={
-            String(now) < row.date_to && String(now) > row.date_from
-              ? "blue"
-              : String(now) > row.date_to
-              ? "green"
-              : "gray"
-          }
-        />
-      ),
-    },
-  ];
+  const { formatDate } = useFormatDate();
 
   return (
     <div className="p-[20px] border border-borderGray rounded-[20px] flex flex-col transition-all duration-300">
@@ -155,11 +93,11 @@ export const ProjectItem = ({
                 Прогресс
               </p>
               <p className="font-[700] text-[14px] leading-[22px] tracking-[-0.4px] text-[#272525]">
-                {Math.round(percent?.progress ?? 0)}%
+                {Math.round(percent?.progress ?? 0 * 100)}%
               </p>
             </div>
             <ProgressBar
-              value={Math.round(percent?.progress ?? 0)}
+              value={Math.round(percent?.progress ?? 0 * 100)}
               style={statusColor}
             />
             <div className="flex items-center justify-between">
@@ -241,11 +179,76 @@ export const ProjectItem = ({
           open ? "h-fit mt-[20px]" : "h-0 mt-0"
         }`}
       >
-        <Table
-          columns={columns}
-          data={work as unknown as ObjectItem[]}
-          gridTemplateColumns="52px 2fr 1fr 1fr 1fr 0.5fr"
-        />
+        <div className="flex flex-col gap-[8px] w-full">
+          <div
+            className="grid items-center h-[52px] bg-[#F9F8F8] border border-borderGray rounded-t-[10px]"
+            style={{ gridTemplateColumns: "52px 2fr 1fr 1fr 1fr 0.5fr" }}
+          >
+            <div className="px-[16px] font-[700] text-[16px] leading-[24px] tracking-[-0.4px] text-[#969696] border-r border-borderGray last:border-0 h-full flex items-center">
+              №
+            </div>
+            <div className="px-[16px] font-[700] text-[16px] leading-[24px] tracking-[-0.4px] text-[#969696] border-r border-borderGray last:border-0 h-full flex items-center">
+              Этап
+            </div>
+            <div className="px-[16px] font-[700] text-[16px] leading-[24px] tracking-[-0.4px] text-[#969696] border-r border-borderGray last:border-0 h-full flex items-center">
+              Дата начала
+            </div>
+            <div className="px-[16px] font-[700] text-[16px] leading-[24px] tracking-[-0.4px] text-[#969696] border-r border-borderGray last:border-0 h-full flex items-center">
+              Дата окончания
+            </div>
+            <div className="px-[16px] font-[700] text-[16px] leading-[24px] tracking-[-0.4px] text-[#969696] border-r border-borderGray last:border-0 h-full flex items-center">
+              Ответственный
+            </div>
+            <div className="px-[16px] font-[700] text-[16px] leading-[24px] tracking-[-0.4px] text-[#969696] border-r border-borderGray last:border-0 h-full flex items-center">
+              Статус
+            </div>
+          </div>
+          {work?.map((item, index) => {
+            const start = new Date(item.date_from);
+            const end = new Date(item.date_to);
+            return (
+              <div
+                key={index}
+                className="grid items-center border-b border-borderGray min-h-[64px]"
+                style={{ gridTemplateColumns: "52px 2fr 1fr 1fr 1fr 0.5fr" }}
+              >
+                <div className="px-[16px] font-[600] text-[16px] leading-[24px] tracking-[-0.2px] text-[#585757] flex items-center">
+                  {index + 1}
+                </div>
+                <div className="px-[16px] font-[600] text-[16px] leading-[24px] tracking-[-0.2px] text-[#585757] flex items-center">
+                  {item.title}
+                </div>
+                <div className="px-[16px] font-[600] text-[16px] leading-[24px] tracking-[-0.2px] text-[#585757] flex items-center">
+                  {formatDate(item.date_from)}
+                </div>
+                <div className="px-[16px] font-[600] text-[16px] leading-[24px] tracking-[-0.2px] text-[#585757] flex items-center">
+                  {formatDate(item.date_to)}
+                </div>
+                <div className="px-[16px] font-[600] text-[16px] leading-[24px] tracking-[-0.2px] text-[#585757] flex items-center">
+                  {formatFio(responsible)}
+                </div>
+                <div className="px-[16px] font-[600] text-[16px] leading-[24px] tracking-[-0.2px] text-[#585757] flex items-center">
+                  <StatusItem
+                    text={
+                      now <= end && now >= start
+                        ? "В работе"
+                        : now > end
+                        ? "Этап сдан"
+                        : "Не начат"
+                    }
+                    status={
+                      now <= end && now >= start
+                        ? "blue"
+                        : now > end
+                        ? "green"
+                        : "gray"
+                    }
+                  />
+                </div>
+              </div>
+            );
+          })}
+        </div>
       </div>
     </div>
   );

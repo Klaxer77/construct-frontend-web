@@ -157,7 +157,7 @@ export const ProgressTab = ({ data }: Data) => {
               : "text-blueSideBarActive"
           }`}
         >
-          {value}%
+          {Math.round(Number(value) * 100)}%
         </p>
       ),
     },
@@ -182,7 +182,9 @@ export const ProgressTab = ({ data }: Data) => {
                 : "gray"
             }
           />
-          {row.status_second !== "none" && (
+          {row.status_second === "none" ? (
+            ""
+          ) : (
             <StatusItem
               text={
                 row.status_second === "awaiting_verification"
@@ -334,11 +336,11 @@ export const ProgressTab = ({ data }: Data) => {
               Прогресс
             </p>
             <p className="font-[700] text-[14px] leading-[22px] tracking-[-0.4px] text-blackText">
-              {Math.round(percent?.progress ?? 0)}%
+              {Math.round(percent?.progress ?? 0 * 100)}%
             </p>
           </div>
           <ProgressBar
-            value={Math.round(percent?.progress ?? 0)}
+            value={Math.round(percent?.progress ?? 0 * 100)}
             style={barColor}
           />
         </div>
