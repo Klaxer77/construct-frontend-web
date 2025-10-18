@@ -90,7 +90,9 @@ export const ProgressTab = ({ data }: Data) => {
   const [isCreating, setIsCreating] = useState(false);
   const { data: user } = useCurrentUser();
   const isConstructionControl = user?.role === "construction_control";
-  const { data: work } = useMaterials(data?.id ?? "");
+  const { data: work, isFetching } = useMaterials(data?.id ?? "");
+  const { data: percent } = useProgress(data?.id ?? "");
+  const procent = Math.round((percent?.progress ?? 0) * 100);
   const { formatDate } = useFormatDate();
 
   const toggleOpen = (i: number) => {
@@ -107,9 +109,10 @@ export const ProgressTab = ({ data }: Data) => {
         (a, b) =>
           new Date(a.date_from).getTime() - new Date(b.date_from).getTime()
       )[0]?.id;
-  const { data: percent } = useProgress(data?.id ?? "");
+
   const completedCount =
     work && work.filter((task) => new Date(task.date_to) < now).length;
+
   const totalCount = work && work.length;
 
   const columns: Column<ObjectItem>[] = [
@@ -150,7 +153,7 @@ export const ProgressTab = ({ data }: Data) => {
       render: (value) => (
         <p
           className={`font-[700] text-[14px] leading-[12px] tracking-[-0.28px] ${
-            value === 100
+            value === 1
               ? "text-[#00691E]"
               : value === 0
               ? "text-[#808080]"
@@ -182,9 +185,7 @@ export const ProgressTab = ({ data }: Data) => {
                 : "gray"
             }
           />
-          {row.status_second === "none" ? (
-            ""
-          ) : (
+          {row.status_second !== "none" && (
             <StatusItem
               text={
                 row.status_second === "awaiting_verification"
@@ -202,20 +203,12 @@ export const ProgressTab = ({ data }: Data) => {
               }
             />
           )}
-
-          {row.status_second !== "awaiting_verification" && (
-            <div className="rounded-[4px] bg-[#FFF2D4] flex items-center justify-center">
-              <p className="text-[#735400] font-[600] text-[14px] leading-[24px] tracking-[-0.4px] w-[68px]">
-                Требует проверки
-              </p>
-            </div>
-          )}
         </div>
       ),
     },
   ];
 
-  return !isCreating ? (
+  return !isFetching && !isCreating ? (
     work?.length ? (
       <div className="flex flex-col">
         <div className="flex justify-between mb-[20px]">
@@ -336,13 +329,10 @@ export const ProgressTab = ({ data }: Data) => {
               Прогресс
             </p>
             <p className="font-[700] text-[14px] leading-[22px] tracking-[-0.4px] text-blackText">
-              {Math.round(percent?.progress ?? 0 * 100)}%
+              {procent}%
             </p>
           </div>
-          <ProgressBar
-            value={Math.round(percent?.progress ?? 0 * 100)}
-            style={barColor}
-          />
+          <ProgressBar value={procent} style={barColor} />
         </div>
 
         <div className="flex flex-col gap-[20px] my-[24px]">
@@ -416,7 +406,7 @@ export const ProgressTab = ({ data }: Data) => {
           {work.map((t, i) => {
             const isOpen = openIndexes.includes(i);
             const progressColor =
-              t.percent === 100
+              t.percent === 1
                 ? "text-[#00691E]"
                 : t.percent === 0
                 ? "text-[#808080]"
@@ -431,7 +421,7 @@ export const ProgressTab = ({ data }: Data) => {
                     <p
                       className={`font-[700] text-[16px] leading-[14px] tracking-[-0.2px] ${progressColor}`}
                     >
-                      {t.percent}%
+                      {Math.round(t.percent * 100)}%
                     </p>
                     <div className="flex flex-col gap-[12px]">
                       <p className="font-[700] text-[16px] leading-[16px] text-[#3D3D3D] tracking-[-0.4px]">

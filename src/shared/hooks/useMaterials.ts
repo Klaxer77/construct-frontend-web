@@ -9,20 +9,20 @@ import {
 
 export const useMaterials = (object_id: string) =>
   useQuery({
-    queryKey: ["materials"],
+    queryKey: ["materials", object_id],
     queryFn: () => getMaterials(object_id),
     enabled: !!object_id,
   });
 export const useMaterialsDetails = (stage_progress_work_id: string) =>
   useQuery({
-    queryKey: ["materialDetail"],
+    queryKey: ["materialDetail", stage_progress_work_id],
     queryFn: () => getMaterialsDetails(stage_progress_work_id),
     enabled: !!stage_progress_work_id,
   });
 
 export const useProgress = (object_id: string) =>
   useQuery({
-    queryKey: ["progress"],
+    queryKey: ["progress", object_id],
     queryFn: () => getMaterialsProgress(object_id),
   });
 

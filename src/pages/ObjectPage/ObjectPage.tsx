@@ -9,44 +9,55 @@ import {
   TasksTable,
 } from "../../widgets";
 import avatar from "/img/avatar.jpg";
-import { infoData, tabs } from "./data";
-import { useState } from "react";
+import { infoData, statusMap, tabs } from "./data";
+import { useEffect, useState } from "react";
 import { RemarksBlock } from "./RemarksBlock";
 import { GeneralBlock } from "./GeneralBlock";
 import { useObjectById } from "../../shared/hooks/useObjects";
-import { useLocation } from "react-router";
+import { useLocation, useNavigate } from "react-router";
 import { ViolationsBlock } from "./ViolationsBlock";
 import { MaterialsBlock } from "./MaterialsBlock";
+import { Loader } from "../../shared/ui/Loader/Loader";
 
 export const ObjectPage = () => {
-  const [activeTab, setActiveTab] = useState("general");
   const avatars = [avatar, avatar, avatar, avatar, avatar];
   const location = useLocation();
+  const navigate = useNavigate();
   const searchParams = new URLSearchParams(location.search);
   const id = searchParams.get("id") ?? "";
-  const { data: object } = useObjectById(id);
-
-  const statusMap = {
-    lead: {
-      title: "Опережение",
-      text: "Проект успевает по срокам",
-      status: "stable",
-    },
-    plan: {
-      title: "По плану",
-      text: "Проект успевает по срокам",
-      status: "stable",
-    },
-    delay: {
-      title: "Опоздание",
-      text: "Проект не успевает по срокам",
-      status: "fast",
-    },
-  };
+  const tabFromUrl = searchParams.get("tab");
+  const { data: object, isFetching } = useObjectById(id);
+  const [activeTab, setActiveTab] = useState(tabFromUrl || "general");
 
   const currentStatus = statusMap[object?.status as keyof typeof statusMap];
 
-  return (
+  const handleTabChange = (tab: string) => {
+    setActiveTab(tab);
+
+    const newSearchParams = new URLSearchParams(location.search);
+    newSearchParams.set("tab", tab);
+
+    navigate(
+      {
+        pathname: location.pathname,
+        search: newSearchParams.toString(),
+      },
+      { replace: true }
+    );
+  };
+
+  useEffect(() => {
+    const currentTab = searchParams.get("tab");
+    if (currentTab && currentTab !== activeTab) {
+      setActiveTab(currentTab);
+    }
+  }, [location.search]);
+
+  return isFetching ? (
+    <div className="h-dvh flex items-center justify-center">
+      <Loader />
+    </div>
+  ) : (
     <div>
       <Header title={object?.title} subtitle={`ID: ${object?.using_id}`}>
         <div className="flex items-center gap-[20px]">
@@ -72,7 +83,7 @@ export const ObjectPage = () => {
         </div>
       )}
 
-      <TabsControl tabs={tabs} active={activeTab} onChange={setActiveTab} />
+      <TabsControl tabs={tabs} active={activeTab} onChange={handleTabChange} />
 
       <div className="mt-[30px]">
         {activeTab === "progress" ? (

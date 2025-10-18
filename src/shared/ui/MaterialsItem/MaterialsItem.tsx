@@ -38,13 +38,11 @@ export const MaterialsItem = ({
   const { formatDate } = useFormatDate();
   const navigate = useNavigate();
   return (
-    <div
-      className={` transition-all overflow-hidden ${
-        expose ? "h-max" : "h-[79px]"
-      }`}
-    >
+    <div className={` transition-all overflow-hidden h-max `}>
       <div
-        className="flex items-center justify-between cursor-pointer py-[16px] border-b border-borderGray"
+        className={`flex items-center justify-between cursor-pointer py-[16px] ${
+          !expose && "border-b border-borderGray"
+        }`}
         onClick={() => setExpose(!expose)}
       >
         <div className="flex flex-col gap-[12px]">
@@ -61,33 +59,37 @@ export const MaterialsItem = ({
           className={`transition ${expose && "rotate-180"}`}
         />
       </div>
-      {stages.map((item, index) => (
-        <div key={index} className=" pt-[16px] ">
-          <div className="flex items-center justify-between pb-[16px] border-b border-borderGray">
+      {expose &&
+        stages.map((item, index) => (
+          <div
+            key={index}
+            className="flex items-center justify-between py-[13px] border-b border-borderGray"
+          >
             <p className="font-[600] text-[14px] leading-[20px] tracking-[-0.2px] text-[#585757] max-w-[300px]">
               {item.title}
             </p>
-            <div className="flex items-center gap-[49px] pr-[49px]">
-              <p className="font-[600] text-[14px] leading-[24px] tracking-[-0.2px] text-[#585757]">
-                {item.volume}
-              </p>
-              <p className="font-[600] text-[14px] leading-[24px] tracking-[-0.2px] text-[#413F3F]">
-                {item.unit}
-              </p>
+            <div className="flex items-center gap-[75px]">
+              <div className="flex gap-[49px]">
+                <p className="font-[600] text-[14px] leading-[24px] tracking-[-0.2px] text-[#585757]">
+                  {item.volume}
+                </p>
+                <p className="font-[600] text-[14px] leading-[24px] tracking-[-0.2px] text-[#413F3F]">
+                  {item.unit}
+                </p>
+              </div>
+
+              <Button
+                text="Открыть"
+                className="rounded-[15px] h-[43px] font-[700] text-[15px]"
+                onClick={() =>
+                  navigate(
+                    `/objects/material/${object_title}?object_id=${object_id}&material_id=${item.id}&material_title=${title}&subtitle=${item.title}`
+                  )
+                }
+              />
             </div>
           </div>
-
-          <Button
-            text="Открыть"
-            className="mt-[14px] rounded-[15px] h-[43px] font-[700] text-[15px]"
-            onClick={() =>
-              navigate(
-                `/objects/material/${object_title}?object_id=${object_id}&material_id=${item.id}&material_title=${title}&subtitle=${item.title}`
-              )
-            }
-          />
-        </div>
-      ))}
+        ))}
     </div>
   );
 };

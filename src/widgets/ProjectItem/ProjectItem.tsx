@@ -66,6 +66,7 @@ export const ProjectItem = ({
     : "—";
 
   const { data: percent } = useProgress(id);
+  const procent = Math.round((percent?.progress ?? 0) * 100);
   const { data: work } = useMaterials(id);
   const now = new Date();
   const { formatDate } = useFormatDate();
@@ -93,13 +94,10 @@ export const ProjectItem = ({
                 Прогресс
               </p>
               <p className="font-[700] text-[14px] leading-[22px] tracking-[-0.4px] text-[#272525]">
-                {Math.round(percent?.progress ?? 0 * 100)}%
+                {procent}%
               </p>
             </div>
-            <ProgressBar
-              value={Math.round(percent?.progress ?? 0 * 100)}
-              style={statusColor}
-            />
+            <ProgressBar value={procent} style={statusColor} />
             <div className="flex items-center justify-between">
               <p className="font-[600] text-[14px] leading-[22px]  text-[#73737C]">
                 Ответственный: {formatFio(responsible)}

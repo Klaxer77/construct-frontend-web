@@ -43,6 +43,24 @@ export const tabs = [
   { label: "Журналы", value: "magazine" },
 ];
 
+export const statusMap = {
+  lead: {
+    title: "Опережение",
+    text: "Проект успевает по срокам",
+    status: "stable",
+  },
+  plan: {
+    title: "По плану",
+    text: "Проект успевает по срокам",
+    status: "stable",
+  },
+  delay: {
+    title: "Опоздание",
+    text: "Проект не успевает по срокам",
+    status: "fast",
+  },
+};
+
 export const columns = [
   { key: "name", title: "Объект" },
   { key: "data", title: "Дата замечания" },

@@ -3,6 +3,7 @@ import {
   useCompanyStatus,
   useCurrentCompany,
 } from "../../shared/hooks/useCompany";
+import { Loader } from "../../shared/ui/Loader/Loader";
 import {
   AttentionTable,
   Header,
@@ -14,9 +15,15 @@ import { actionsData, attentionData, infoItems } from "./data";
 export const Dashboard = () => {
   const formatNumber = useFormatNumber();
   const { data: companyData } = useCurrentCompany();
-  const { data: statusData } = useCompanyStatus(companyData?.id ?? "");
+  const { data: statusData, isFetching } = useCompanyStatus(
+    companyData?.id ?? ""
+  );
 
-  return (
+  return isFetching ? (
+    <div className="flex items-center justify-center h-dvh">
+      <Loader />
+    </div>
+  ) : (
     <div>
       <Header
         title="Дашборд"
