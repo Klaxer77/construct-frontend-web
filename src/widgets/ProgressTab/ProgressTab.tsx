@@ -166,8 +166,42 @@ export const ProgressTab = ({ data }: Data) => {
       title: "Статус",
       render: (_value, row) => (
         <div className="flex flex-col gap-[6px]">
-          <StatusItem text="В работе" status="blue" />
+          <StatusItem
+            text={
+              row.status_main === "work"
+                ? "В работе"
+                : row.status_main === "passed"
+                ? "Этап сдан"
+                : "Не начат"
+            }
+            status={
+              row.status_main === "work"
+                ? "blue"
+                : row.status_main === "passed"
+                ? "green"
+                : "gray"
+            }
+          />
           {row.status_second !== "none" && (
+            <StatusItem
+              text={
+                row.status_second === "awaiting_verification"
+                  ? "Требует проверки"
+                  : row.status_second === "verification_rejected"
+                  ? "Проверка отклонена"
+                  : "Проверка пройдена"
+              }
+              status={
+                row.status_second === "awaiting_verification"
+                  ? "darkYellow"
+                  : row.status_second === "verification_rejected"
+                  ? "red"
+                  : "green"
+              }
+            />
+          )}
+
+          {row.status_second !== "awaiting_verification" && (
             <div className="rounded-[4px] bg-[#FFF2D4] flex items-center justify-center">
               <p className="text-[#735400] font-[600] text-[14px] leading-[24px] tracking-[-0.4px] w-[68px]">
                 Требует проверки
@@ -300,10 +334,13 @@ export const ProgressTab = ({ data }: Data) => {
               Прогресс
             </p>
             <p className="font-[700] text-[14px] leading-[22px] tracking-[-0.4px] text-blackText">
-              {percent?.progress}%
+              {Math.round(percent?.progress ?? 0)}%
             </p>
           </div>
-          <ProgressBar value={percent?.progress ?? 0} style={barColor} />
+          <ProgressBar
+            value={Math.round(percent?.progress ?? 0)}
+            style={barColor}
+          />
         </div>
 
         <div className="flex flex-col gap-[20px] my-[24px]">

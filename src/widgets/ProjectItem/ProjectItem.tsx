@@ -6,14 +6,15 @@ import {
   StatusItem,
   Table,
   usePluralize,
+  type Column,
 } from "../../shared";
 import { useNavigate } from "react-router";
-import { columns, data } from "./data";
 import { formatDistanceToNow, parseISO } from "date-fns";
 import { ru } from "date-fns/locale";
 import { formatFio } from "../../shared/hooks/useFormatFIO";
 import { Map, Polygon, ZoomControl } from "@pbe/react-yandex-maps";
-import { useProgress } from "../../shared/hooks/useMaterials";
+import { useMaterials, useProgress } from "../../shared/hooks/useMaterials";
+import { useFormatDate } from "../../shared/hooks/useFormatDate";
 
 interface ProjectItemProps {
   title: string;
@@ -24,6 +25,15 @@ interface ProjectItemProps {
   updated: string;
   id: string;
   coords: number[][][] | number[][];
+}
+
+interface ObjectItem {
+  number?: number;
+  title: string;
+  date_from: string;
+  date_to: string;
+  responsible: string;
+  status_main: string;
 }
 
 export const ProjectItem = ({
@@ -66,7 +76,61 @@ export const ProjectItem = ({
     ? formatDistanceToNow(parseISO(updated), { addSuffix: true, locale: ru })
     : "—";
 
+  const { formatDate } = useFormatDate();
+
   const { data: percent } = useProgress(id);
+  const { data: work } = useMaterials(id);
+  const now = new Date();
+  const columns: Column<ObjectItem>[] = [
+    {
+      key: "number",
+      title: "№",
+      render: (_value, _row, index) => index + 1,
+    },
+    { key: "title", title: "Этап" },
+    {
+      key: "date_from",
+      title: "Дата начала",
+      render: (value) => formatDate(String(value)),
+    },
+    {
+      key: "date_to",
+      title: "Дата окончания",
+      render: (value) => formatDate(String(value)),
+    },
+    {
+      key: "responsible",
+      title: "Ответственный",
+      render: () => (
+        <div className="flex items-center gap-[14px]">
+          {formatFio(responsible)}
+          <Icon name="Share" color="#007AFF" />
+        </div>
+      ),
+    },
+    {
+      key: "status_main",
+      title: "Статус",
+      render: (_value, row) => (
+        <StatusItem
+          text={
+            String(now) <= row.date_to && String(now) >= row.date_from
+              ? "В работе"
+              : String(now) > row.date_to
+              ? "Этап сдан"
+              : "Не начат"
+          }
+          status={
+            String(now) < row.date_to && String(now) > row.date_from
+              ? "blue"
+              : String(now) > row.date_to
+              ? "green"
+              : "gray"
+          }
+        />
+      ),
+    },
+  ];
 
   return (
     <div className="p-[20px] border border-borderGray rounded-[20px] flex flex-col transition-all duration-300">
@@ -91,10 +155,13 @@ export const ProjectItem = ({
                 Прогресс
               </p>
               <p className="font-[700] text-[14px] leading-[22px] tracking-[-0.4px] text-[#272525]">
-                {percent?.progress}%
+                {Math.round(percent?.progress ?? 0)}%
               </p>
             </div>
-            <ProgressBar value={percent?.progress ?? 0} style={statusColor} />
+            <ProgressBar
+              value={Math.round(percent?.progress ?? 0)}
+              style={statusColor}
+            />
             <div className="flex items-center justify-between">
               <p className="font-[600] text-[14px] leading-[22px]  text-[#73737C]">
                 Ответственный: {formatFio(responsible)}
@@ -176,10 +243,9 @@ export const ProjectItem = ({
       >
         <Table
           columns={columns}
-          data={data}
+          data={work as unknown as ObjectItem[]}
           gridTemplateColumns="52px 2fr 1fr 1fr 1fr 0.5fr"
         />
-        ;
       </div>
     </div>
   );

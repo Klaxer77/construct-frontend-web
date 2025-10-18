@@ -8,7 +8,8 @@ interface StatusItemProps {
     | "gray"
     | "yellow"
     | "lightBlue"
-    | "darkRed";
+    | "darkRed"
+    | "darkYellow";
 }
 
 export const StatusItem = ({ text, status }: StatusItemProps) => {
@@ -21,6 +22,7 @@ export const StatusItem = ({ text, status }: StatusItemProps) => {
     darkRed: { bgColor: "bg-[#FF9385]", textColor: "text-[#AD0600]" },
     gray: { bgColor: "bg-bgGray", textColor: "text-gray70" },
     yellow: { bgColor: "bg-yellow", textColor: "text-darkYellow" },
+    darkYellow: { bgColor: "bg-[#FFF2D4]", textColor: "text-[#735400]" },
   } as const;
 
   const { bgColor, textColor } = statusStyles[status];
